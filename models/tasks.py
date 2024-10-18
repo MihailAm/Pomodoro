@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 from sqlalchemy import String, Integer, ForeignKey
 
-Base = declarative_base()
+from database import Base
 
 
 class Tasks(Base):
