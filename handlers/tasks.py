@@ -2,9 +2,8 @@ from typing import Annotated
 
 from fastapi import FastAPI, APIRouter, status, Depends
 
-from database import Tasks
-from dependecy import get_tasks_repository, get_task_cache_repository, get_task_service
-from repository import TaskRepository, TaskCache
+from dependecy import get_tasks_repository, get_task_service
+from repository import TaskRepository
 from schema.task import TaskSchema
 from service import TaskService
 
