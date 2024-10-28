@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import requests
+import httpx
 
 from schema import YandexUserData
 from settings import Settings
@@ -9,15 +9,17 @@ from settings import Settings
 @dataclass
 class YandexClient:
     settings: Settings
+    async_client: httpx.AsyncClient
 
-    def get_user_info(self, code: str) -> YandexUserData:
-        access_token = self._get_user_access_token(code=code)
-        user_info = requests.get('https://login.yandex.ru/info?format=json',
-                                 headers={"Authorization": f"OAuth {access_token}"})
+    async def get_user_info(self, code: str) -> YandexUserData:
+        access_token = await self._get_user_access_token(code=code)
+
+        user_info = await self.async_client.get('https://login.yandex.ru/info?format=json',
+                                                headers={"Authorization": f"OAuth {access_token}"})
         return YandexUserData(**user_info.json(), access_token=access_token)
 
-    def _get_user_access_token(self, code: str) -> str:
-        response = requests.post(
+    async def _get_user_access_token(self, code: str) -> str:
+        response = await self.async_client.post(
             self.settings.YANDEX_TOKEN_URL,
             data={
                 "grant_type": "authorization_code",

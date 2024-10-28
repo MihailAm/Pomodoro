@@ -18,8 +18,8 @@ class AuthService:
     google_client: GoogleClient
     yandex_client: YandexClient
 
-    def login(self, username: str, password: str) -> UserLoginSchema:
-        user = self.user_repository.get_user_by_username(username)
+    async def login(self, username: str, password: str) -> UserLoginSchema:
+        user = await self.user_repository.get_user_by_username(username)
         if not user:
             raise UserNotFoundException
         if user.password != password:
@@ -50,9 +50,9 @@ class AuthService:
     def get_google_redirect_url(self) -> str:
         return self.settings.google_redirect_url
 
-    def google_auth(self, code: str):
-        user_data = self.google_client.get_user_info(code=code)
-        user = self.user_repository.get_user_by_email(email=user_data.email)
+    async def google_auth(self, code: str):
+        user_data = await self.google_client.get_user_info(code=code)
+        user = await self.user_repository.get_user_by_email(email=user_data.email)
         if user:
             access_token = self.generate_access_token(user_id=user.id)
             return UserLoginSchema(user_id=user.id, access_token=access_token)
@@ -60,17 +60,17 @@ class AuthService:
         create_user_data = UserCreateSchema(google_access_token=user_data.access_token,
                                             email=user_data.email,
                                             name=user_data.name)
-        created_user = self.user_repository.create_user(create_user_data)
+        created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     def get_yandex_redirect_url(self) -> str:
         return self.settings.yandex_redirect_url
 
-    def yandex_auth(self, code: str):
-        user_data = self.yandex_client.get_user_info(code=code)
+    async def yandex_auth(self, code: str):
+        user_data = await self.yandex_client.get_user_info(code=code)
 
-        user = self.user_repository.get_user_by_email(email=user_data.default_email)
+        user = await self.user_repository.get_user_by_email(email=user_data.default_email)
         if user:
             access_token = self.generate_access_token(user_id=user.id)
             return UserLoginSchema(user_id=user.id, access_token=access_token)
@@ -81,6 +81,6 @@ class AuthService:
             name=user_data.name
             )
 
-        created_user = self.user_repository.create_user(create_user_data)
+        created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
