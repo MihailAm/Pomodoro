@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, model_validator
+from pydantic.v1 import ConfigDict
 
 
 class TaskSchema(BaseModel):
@@ -8,8 +9,7 @@ class TaskSchema(BaseModel):
     category_id: int
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="after")
     def check_name_or_pomodoro_is_none(self):
