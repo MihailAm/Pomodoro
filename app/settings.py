@@ -1,3 +1,4 @@
+from pydantic.v1 import ConfigDict
 from pydantic_settings import BaseSettings
 import os
 
@@ -22,8 +23,7 @@ class Settings(BaseSettings):
     YANDEX_REDIRECT_URI: str
     YANDEX_TOKEN_URL: str
 
-    class Config:
-        env_file = ".local.env"
+    model_config = ConfigDict(env_file=".local.env")
 
     @property
     def db_url(self):
