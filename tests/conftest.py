@@ -1,3 +1,6 @@
+import pytest
+import asyncio
+
 pytest_plugins = [
     "tests.fixtures.auth.auth_service",
     "tests.fixtures.auth.clients",
@@ -8,3 +11,4 @@ pytest_plugins = [
     "tests.fixtures.tasks.task_service",
     "tests.fixtures.tasks.task_repository"
 ]
+
